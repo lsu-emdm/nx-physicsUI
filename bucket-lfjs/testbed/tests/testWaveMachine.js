@@ -4,6 +4,7 @@
 // Contact events
 // Get the fixtures from the contact, get the bodies from the fixtures
 // pre-solve contact determines point state and approach velocity of collisions 
+
 function TestWaveMachine() {
     camera.position.y = 1;
     camera.position.z = 2.5;
@@ -61,22 +62,22 @@ function TestWaveMachine() {
     this.joint = jd.InitializeAndCreate(ground, body, new b2Vec2(0, 0.75)); // investigate ground param
     this.time = 0;
     
+    // put this inside a function (maybe onclick or something) so that a new group instance is made each time
+    // each new group instance has different musical qualities, colors
     // setup particles
     var psd = new b2ParticleSystemDef();
-    psd.radius = 0.025; // size of particles
-    psd.dampingStrength = 0.2; // reduces velocity but I can't notice a difference yet.
-    psd.b2ParticleFlag = b2_waterParticle;
+    psd.radius = 0.025;
+    psd.dampingStrength = 0.2;
     
-    //world.SetContactFilter(psd); // look at testCollisionFiltering.js
     var particleSystem = world.CreateParticleSystem(psd);
     var box = new b2PolygonShape();
-    box.SetAsBoxXYCenterAngle(0.9, 0.9, new b2Vec2(0, 1.0), 0);
+    box.SetAsBoxXYCenterAngle(0.9, 0.9, new b2Vec2(0, 4.0), 0);
     
     var particleGroupDef = new b2ParticleGroupDef();
     particleGroupDef.shape = box;
     var particleGroup = particleSystem.CreateParticleGroup(particleGroupDef);
     
-    world.SetContactListener(psd); //listen to psd for contacts
+    world.SetContactListener(this); //listen to contacts inside TestWaveMachine
 }
 
 TestWaveMachine.prototype.Step = function() {
@@ -85,8 +86,87 @@ TestWaveMachine.prototype.Step = function() {
     this.joint.SetMotorSpeed(0.05 * Math.cos(this.time) * Math.PI);
 }
 
-TestWaveMachine.prototype.Rub = function(contact) { // why doesn't this work?    
-    if (b2_waterParticle) {
-        console.log("testing contacts");
-    }
+TestWaveMachine.prototype.BeginContact = function(particleSystem, contact) {
+    console.log(particleSystem, particleContact);    
 }
+
+
+TestWaveMachine.prototype.PostSolve = function(contact, impulse) {
+    console.log(contact);
+}
+//TestWaveMachine.prototype.PostSolve = function(contact, impulse) { // best for gathering impulses  
+    
+    
+    //console.log(contact.GetFixtureA()); // polygon shape // I think this is just the bucket touching the stopper
+    //console.log(contact.GetFixtureB()); // circle shape
+    //console.log(contact.GetFixtureA().body.GetLinearVelocity());
+    
+    // detect what is colliding - circle and bucket, not particles
+    // get fixture from A and B
+    // check shape, get user data, set user data, 
+    // get list of particles generated
+    // use array to attach pitch, etc. to particles 1-100
+    // calculate on fly, assign, or put data into object (this is most obj orient);
+//}
+
+/*
+About particles:
+Behaviors can be set
+Create a group and set group properties. See b2ParticleGroupFlag.
+To create particles: b2ParticleDef object, specify behaviors, call CreateParticle(particleName) method (CreateParticle returns an index)
+Particle Group begins in a shape (try a for loop that names each particle for ID)
+b2ParticleGroupFlag: use b2_elasticParticle; pd.flags = b2_elasticParticle;
+Properties: Color: pd.color.Set(r, g, b, a); Size, Position: pd.position.Set(x, y); Velocity, Angle, Strength
+
+About collisions:
+collision module contains shapes and functions that operate on them
+shapes describe collision geometry
+you can test a point of overlap on shapes
+Binary functions in collision module: overlap, contact manifolds, distance, time of impact
+inspect broad and narrow phase collision processing 
+
+Contact ID's are used to match contact points across time steps
+contacts are created when 2 FIXTURE'S AABB's overlap. Sometimes collision filtering will prevent the creation of contacts.
+Contact class is created and destroyed by liquidfun
+You can access the contact class and interact with it: GetManifold();
+use IsTouching(); for sensors (boolean)
+You can get the fixtures from a contact. From those you can get the bodies.
+
+   b2Fixture* fixtureA = myContact->GetFixtureA();
+   b2Body* bodyA = fixtureA->GetBody();
+   MyActor* actorA = (MyActor*)bodyA->GetUserData();
+   
+You can access all contacts in the world:
+for (b2Contact* c = myWorld->GetContactList(); c; c = c->GetNext())
+   {
+      // process c
+   }
+
+Contact listener is most accurate
+listeners support events: begin, end, pre-solve, post-solve
+
+The pre-solve event is also a good place to determine the point state and the approach velocity of collisions.
+
+   void PreSolve(b2Contact* contact, const b2Manifold* oldManifold)
+   {
+      b2WorldManifold worldManifold;
+      contact->GetWorldManifold(&worldManifold);
+      b2PointState state1[2], state2[2];
+      b2GetPointStates(state1, state2, oldManifold, contact->GetManifold());
+      if (state2[0] == b2_addState)
+      {
+         const b2Body* bodyA = contact->GetFixtureA()->GetBody();
+         const b2Body* bodyB = contact->GetFixtureB()->GetBody();
+         b2Vec2 point = worldManifold.points[0];
+         b2Vec2 vA = bodyA->GetLinearVelocityFromWorldPoint(point);
+         b2Vec2 vB = bodyB->GetLinearVelocityFromWorldPoint(point);
+         float32 approachVelocity = b2Dot(vB – vA, worldManifold.normal);
+         if (approachVelocity > 1.0f)
+         {
+            MyPlayCollisionSound();
+         }
+      }
+   }
+   
+Contact filtering decides what objects collide.
+*/
