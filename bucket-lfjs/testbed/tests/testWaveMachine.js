@@ -5,6 +5,7 @@
 // Get the fixtures from the contact, get the bodies from the fixtures
 // pre-solve contact determines point state and approach velocity of collisions 
 
+// make button to stop all physics
 function TestWaveMachine() {
     camera.position.y = 1;
     camera.position.z = 2.5;
@@ -68,16 +69,49 @@ function TestWaveMachine() {
     var psd = new b2ParticleSystemDef();
     psd.radius = 0.025;
     psd.dampingStrength = 0.2;
+    psd.destroyByAge = true;
+    psd.repulsiveStrength = 0;
     
     var particleSystem = world.CreateParticleSystem(psd);
-    var box = new b2PolygonShape();
-    box.SetAsBoxXYCenterAngle(0.9, 0.9, new b2Vec2(0, 4.0), 0);
     
-    var particleGroupDef = new b2ParticleGroupDef();
-    particleGroupDef.shape = box;
-    var particleGroup = particleSystem.CreateParticleGroup(particleGroupDef);
-    
+    var groupNum = 30;
+    for (var i = 0; i < groupNum; i++) {
+        var box = new b2PolygonShape();
+        box.SetAsBoxXYCenterAngle(0.1, 0.499, new b2Vec2(0, 4+i), 0);
+        var particleGroupDef = new b2ParticleGroupDef();
+        particleGroupDef.shape = box;
+        particleGroupDef.lifetime = 9;
+        var particleGroup = particleSystem.CreateParticleGroup(particleGroupDef);
+        //var destroyParticleGroup = particleGroup.DestroyParticles(particleGroupDef);
+        //particleSystem.ParticleGroupDestroyed = [i];
+    }
+
+    var myLoop = setInterval(faucet, 7500);
+    function faucet() {   
+        var groupNum = 30;
+        for (var i = 0; i < groupNum; i++) {
+            var box = new b2PolygonShape();
+            box.SetAsBoxXYCenterAngle(0.1, 0.499, new b2Vec2(0, 4+i), 0);
+            var particleGroupDef = new b2ParticleGroupDef();
+            particleGroupDef.shape = box;
+            particleGroupDef.lifetime = 9;
+            var particleGroup = particleSystem.CreateParticleGroup(particleGroupDef);
+            //particleSystem.destroyOldestParticle = true;
+        }
+        //var shape = box;
+        //var xf = new b2Transform;
+        //xf.SetIdentity();
+        //particleSystem.DestroyParticlesInShape(shape, xf);    
+        //var destroyParticleSystem = world.DestroyParticleSystem(particleSystem);
+    }
+
+    // fill the buck up slower? color code each instance?
+    // figure out how to delete them better.
     world.SetContactListener(this); //listen to contacts inside TestWaveMachine
+    console.log(psd);
+    console.log(particleSystem);
+    console.log(particleGroupDef);
+    console.log(particleGroup);
 }
 
 TestWaveMachine.prototype.Step = function() {
@@ -86,14 +120,37 @@ TestWaveMachine.prototype.Step = function() {
     this.joint.SetMotorSpeed(0.05 * Math.cos(this.time) * Math.PI);
 }
 
-TestWaveMachine.prototype.BeginContact = function(particleSystem, contact) {
-    console.log(particleSystem, particleContact);    
-}
+//TestWaveMachine.prototype.BeginContact = function(particleSystem, particleContact) {
+//    console.log(particleSystem, particleContact);    
+//}
 
 
-TestWaveMachine.prototype.PostSolve = function(contact, impulse) {
-    console.log(contact);
+//TestWaveMachine.prototype.PostSolve = function(contact, impulse) {
+//    console.log(contact);
+//}
+
+/*
+TestWaveMachine.prototype.PreSolve = function(contact, oldManifold) {
+    var worldManifold = b2WorldManifold;
+    contact = GetWorldManifold(worldManifold);
+    var state1[2] = b2PointState;
+    var state2[2] = b2PointState;
+
+    b2GetPointStates(state1, state2, oldManifold, contact->GetManifold());
+    if (state2[0] == b2_addState) {
+       const b2Body* bodyA = contact->GetFixtureA()->GetBody();
+       const b2Body* bodyB = contact->GetFixtureB()->GetBody();
+       b2Vec2 point = worldManifold.points[0];
+       b2Vec2 vA = bodyA->GetLinearVelocityFromWorldPoint(point);
+       b2Vec2 vB = bodyB->GetLinearVelocityFromWorldPoint(point);
+       float32 approachVelocity = b2Dot(vB – vA, worldManifold.normal);
+       if (approachVelocity > 1.0f)
+       {
+          MyPlayCollisionSound();
+       }
+    }
 }
+*/
 //TestWaveMachine.prototype.PostSolve = function(contact, impulse) { // best for gathering impulses  
     
     
