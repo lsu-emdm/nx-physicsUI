@@ -326,6 +326,8 @@ var Bodies = require('./Bodies');
         Composites.mesh(softBody, columns, rows, crossBrace, constraintOptions);
 
         softBody.label = 'Soft Body';
+				softBody.rows = rows;
+				softBody.columns = columns;
 
         return softBody;
     };
