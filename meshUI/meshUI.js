@@ -1,5 +1,9 @@
 
 
+var numColumns = 20,
+ 		numRows = 12;
+
+
 ////// Tone
 
 var synth = [];
@@ -7,15 +11,18 @@ var pitchOffset = 200;
 
 var gain = new Tone.Gain(0.01).toMaster();
 
-function createSynths(noDis) {
+function createSynths() {
 	gain.gain.value = 1 / (numColumns * numRows);
 	synth = [];
-	for (var i = 0; i < noDis.length; i++) {
-		var freq = noDis[i].x + noDis[i].y + pitchOffset;
-		// var freq = noDis[i].x + pitchOffset;
-		synth[i] = new Tone.Oscillator(freq, "sine").connect(gain).start();
-		// console.log("Freq: ", freq, i);
+	if(noDisplacement[0]){
+		for (var i = 0; i < noDisplacement.length; i++) {
+			var freq = noDisplacement[i].x + noDisplacement[i].y + pitchOffset;
+			// var freq = noDis[i].x + pitchOffset;
+			synth[i] = new Tone.Oscillator(freq, "sine").connect(gain).start();
+			// console.log("Freq: ", freq, i);
+		}
 	}
+
 	
 }
 
@@ -30,9 +37,6 @@ function updateSynthPitches(dis, noDis) {
 
 
 ////// Mesh
-
-var numColumns = 20,
- 		numRows = 12;
 
 var Engine = Matter.Engine,
     Render = Matter.Render,
@@ -132,7 +136,7 @@ function setDisplacement() {
 	}
 	// console.log("No Displacement: ", noDisplacement);
 	
-	createSynths(noDisplacement);
+	// createSynths(noDisplacement);
 	
 }
 
