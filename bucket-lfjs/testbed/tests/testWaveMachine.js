@@ -10,35 +10,44 @@ function TestWaveMachine() {
     camera.position.y = 1;
     camera.position.z = 2.5;
     
-    var bd = new b2BodyDef(); //defines a body
-    var ground = world.CreateBody(bd); //creates a bd (body) in the world
+    var bd1 = new b2BodyDef(); //defines a body
+    var ground = world.CreateBody(bd1); //creates a bd (body) in the world
+    console.log(bd1);
+    console.log(ground);
     
     // investigate making shapes, then bodies like this
     // this has to be at top b/c it uses bd and is static, else no body collisions
-    bd = new b2BodyDef(); //define new body
+    //bd1 = new b2BodyDef(); //define new body
     var circle = new b2CircleShape(); // create var for circle
-    bd.type = b2_staticBody; //define new body as static
-    var body = world.CreateBody(bd); // creates new static circle body (bd) in the world
+    bd1.type = b2_staticBody; //define new body as static
+    var body1 = world.CreateBody(bd1); // creates new static circle body (bd) in the world
     circle.position.Set(1.1, -0.3); // gives static circle body a position in the world
     circle.radius = 0.25; // size of static circle body
-    body.CreateFixtureFromShape(circle, 0.5); // static cirle body (bd) is given a fixture (circle) and density
+    body1.CreateFixtureFromShape(circle, 0.5); // static cirle body (bd) is given a fixture (circle) and density
+    console.log(circle);
+    console.log(body1);
     
-    bd.type = b2_dynamicBody;
-    bd.allowSleep = false;
-    bd.position.Set(0, 1);
-    var body = world.CreateBody(bd);
+    var bd2 = new b2BodyDef();
+    bd2.type = b2_dynamicBody;
+    bd2.allowSleep = false;
+    bd2.position.Set(0, 1);
+    this.body2 = world.CreateBody(bd2);
+    console.log(bd2);
+    console.log(this.body2);
     
     // b1.SetAsBoxXYCenterAngle(hx, hy, center in local coords, rotation in local coords or 0-3.14);
     // CreateFixtureFromShape(body, density);
     // rightwall
     var b1 = new b2PolygonShape();
     b1.SetAsBoxXYCenterAngle(0.05, 1, new b2Vec2(1, 0), 3.09);
-    body.CreateFixtureFromShape(b1, 5);
+    this.body2.CreateFixtureFromShape(b1, 5);
+    console.log(b1);
     
     // left wall
     var b2 = new b2PolygonShape();
     b2.SetAsBoxXYCenterAngle(0.05, 1, new b2Vec2(-1, 0), 0.05);
-    body.CreateFixtureFromShape(b2, 5);
+    this.body2.CreateFixtureFromShape(b2, 5);
+    console.log(b2);
     
     // top wall
     /*var b3 = new b2PolygonShape();
@@ -48,20 +57,25 @@ function TestWaveMachine() {
     // bottom wall
     var b4 = new b2PolygonShape();
     b4.SetAsBoxXYCenterAngle(1, 0.05, new b2Vec2(0, -1), 0);
-    body.CreateFixtureFromShape(b4, 5);
+    this.body2.CreateFixtureFromShape(b4, 5);
+    console.log(b4);
     
     // counter-weight body
     var b5 = new b2PolygonShape();
     b5.SetAsBoxXYCenterAngle(0.25, 0.25, new b2Vec2(0.69, -0.7), 0);
-    body.CreateFixtureFromShape(b5, 2);
+    this.body2.CreateFixtureFromShape(b5, 2);
+    console.log(b5);
     
     // motion
     var jd = new b2RevoluteJointDef();
     jd.motorSpeed = 0.05 * Math.PI;
     jd.maxMotorTorque = 1e7;
     jd.enableMotor = false; //true; to turn on motor
-    this.joint = jd.InitializeAndCreate(ground, body, new b2Vec2(0, 0.75)); // investigate ground param
+    this.joint = jd.InitializeAndCreate(ground, this.body2, new b2Vec2(0, 0.75)); // investigate ground param
     this.time = 0;
+    console.log(jd);
+    console.log(this.joint);
+    console.log(this.time);
     
     // put this inside a function (maybe onclick or something) so that a new group instance is made each time
     // each new group instance has different musical qualities, colors
@@ -85,7 +99,7 @@ function TestWaveMachine() {
         //var destroyParticleGroup = particleGroup.DestroyParticles(particleGroupDef);
         //particleSystem.ParticleGroupDestroyed = [i];
     }
-
+    
     var myLoop = setInterval(faucet, 7500);
     function faucet() {   
         var groupNum = 30;
@@ -104,7 +118,6 @@ function TestWaveMachine() {
         //particleSystem.DestroyParticlesInShape(shape, xf);    
         //var destroyParticleSystem = world.DestroyParticleSystem(particleSystem);
     }
-
     // fill the buck up slower? color code each instance?
     // figure out how to delete them better.
     world.SetContactListener(this); //listen to contacts inside TestWaveMachine
@@ -120,9 +133,9 @@ TestWaveMachine.prototype.Step = function() {
     this.joint.SetMotorSpeed(0.05 * Math.cos(this.time) * Math.PI);
 }
 
-//TestWaveMachine.prototype.BeginContact = function(particleSystem, particleContact) {
-//    console.log(particleSystem, particleContact);    
-//}
+TestWaveMachine.prototype.BeginContact = function(contact, impulse) {
+    console.log(particleSystem, particleContact);    
+}
 
 
 //TestWaveMachine.prototype.PostSolve = function(contact, impulse) {
