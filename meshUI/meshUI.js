@@ -38,8 +38,8 @@ function createMinorSynths() {
 	if(noDisplacement[0]){
 		for (var i = numRows; i > 0; i--) {			// [5 4 3 2 1]
 			for (var j = 0; j < numColumns; j++) {	// [0 1 2 3 4 5 6]
-				let col = j - 3;	// [-3,5 -2,5 -1,5 0,5 1,5 2,5 3,5 -3,4 ...]
-				var note = tonic.get(-1*col*5).;
+				var col = j - 3;	// [-3,5 -2,5 -1,5 0,5 1,5 2,5 3,5 -3,4 ...]
+				var note = tonic.get(-1*(col*5));
 				// synth[i] = new Tone.Oscillator(freq, "sine").connect(gain).start();
 				synth.push(new Tone.Oscillator(note, "sine").connect(gain).start(););
 				// console.log("Freq: ", freq, i);
