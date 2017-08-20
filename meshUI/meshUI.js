@@ -30,7 +30,7 @@ function createMinorSynths() {
 	var tonic = teoria.note('a')    // Create a note, A3
 	var minor = tonic.scale('minor')  // Create a minor scale with that note as root (A minor)
 	console.log("Minor Scale: ", minor.simple());	
-	console.log("Third: ",minor.get(3))     // Get the third note of the scale (C4)
+	// console.log("Third: ",minor.get(3))     // Get the third note of the scale (C4)
 	
 	gain.gain.value = 1 / (numColumns * numRows);
 	synth = [];
@@ -41,8 +41,7 @@ function createMinorSynths() {
 			for (var j = 0; j < numColumns; j++) {	// [0 1 2 3 4 5 6]
 				var col = j - 3;	// [-3,5 -2,5 -1,5 0,5 1,5 2,5 3,5 -3,4 ...]
 				var note = minor.get(1+(col*4) + (i * 2));
-				// synth[i] = new Tone.Oscillator(freq, "sine").connect(gain).start();
-				console.log("Note: ", note.toString());
+				// console.log("Note: ", note.toString());
 				synth.push(new Tone.Oscillator(note.fq(), "sine").connect(gain).start());
 				synthPitches.push(note.fq());
 			}
@@ -68,7 +67,8 @@ function updateMinorSynthPitches(dis) {
 			// Y displacement for volume
 		var vol = Math.abs(dis[i].y * 2.)-128;
 		vol = Math.min(Math.max(vol, -128), 24);
-		console.log("vol: ", vol, Math.abs(dis[i].y)); 
+		// console.log("vol: ", vol, Math.abs(dis[i].y)); 
+			// X displacement to detune pitches
 		var freq = synthPitches[i] + dis[i].x;
 		// console.log("Freq: ", freq, i);
 		synth[i].frequency.value = freq;
