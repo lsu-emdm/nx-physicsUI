@@ -13,8 +13,9 @@
     <title>cradle.js Demo</title>
 
     <!-- Matter -->
-    <script src="../matter-js/build/matter-dev.js"></script>
+    <script src="../js/matter-dev.js"></script>
 		<script src="../js/Tone9.js"></script>
+		<script src="../js/teoria.js"></script>
 
 
     
@@ -33,7 +34,9 @@
   </head>
   <body>
 	<button onClick="setDisplacement();">Set Initial Displacement</button>
-	<button onClick="createSynths();">Create Synths</button>
+	<button onClick="createUniformSynths();">Create Synth Cluster</button>
+	<button onClick="createMinorSynths();">Create Synth Minor</button>
+	<button onClick="createClosedSynths();">Create Synth Bank</button>
 	<button onClick="meshDisplacement();">Find Displacement</button>
 	
   </body>

@@ -1,7 +1,7 @@
 
 
-var numColumns = 20,
- 		numRows = 12;
+var numColumns = 7,
+ 		numRows = 5;
 
 
 ////// Tone
@@ -11,7 +11,7 @@ var pitchOffset = 200;
 
 var gain = new Tone.Gain(0.01).toMaster();
 
-function createSynths() {
+function createUniformSynths() {
 	gain.gain.value = 1 / (numColumns * numRows);
 	synth = [];
 	if(noDisplacement[0]){
@@ -21,8 +21,34 @@ function createSynths() {
 			synth[i] = new Tone.Oscillator(freq, "sine").connect(gain).start();
 			// console.log("Freq: ", freq, i);
 		}
-	}
+	}	
+}
 
+function createMinorSynths() {
+	var tonic = teoria.note('a')    // Create a note, A3
+	var minor = tonic.scale('minor')  // Create a lydian scale with that note as root (A lydian)
+	console.log("Minor Scale: ", minor.simple());
+	
+	console.log("M2 up: ",tonic.interval('M2'));   // 
+	console.log("Third: ",minor.get('third'))     // Get the third note of the scale (D#4)
+	
+	gain.gain.value = 1 / (numColumns * numRows);
+	synth = [];
+	
+	if(noDisplacement[0]){
+		for (var i = numRows; i > 0; i--) {			// [5 4 3 2 1]
+			for (var j = 0; j < numColumns; j++) {	// [0 1 2 3 4 5 6]
+				let col = j - 3;	// [-3,5 -2,5 -1,5 0,5 1,5 2,5 3,5 -3,4 ...]
+				var note = tonic.get(-1*col*5).;
+				// synth[i] = new Tone.Oscillator(freq, "sine").connect(gain).start();
+				synth.push(new Tone.Oscillator(note, "sine").connect(gain).start(););
+				// console.log("Freq: ", freq, i);
+			}
+		}
+	}
+}
+	
+function createClosedSynths() {
 	
 }
 
@@ -73,7 +99,6 @@ Events.on(engine, 'afterUpdate', function(event) {
 	if(noDisplacement[0]){
 		meshDisplacement();
 	}
-
 });
 
 
