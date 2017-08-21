@@ -41,7 +41,7 @@ function createMinorSynths() {
 				var col = j - 3;	// [-3,5 -2,5 -1,5 0,5 1,5 2,5 3,5 -3,4 ...]
 				var note = tonic.get(-1*(col*5));
 				// synth[i] = new Tone.Oscillator(freq, "sine").connect(gain).start();
-				synth.push(new Tone.Oscillator(note, "sine").connect(gain).start(););
+				synth.push(new Tone.Oscillator(note, "sine").connect(gain).start());
 				// console.log("Freq: ", freq, i);
 			}
 		}
