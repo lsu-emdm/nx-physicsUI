@@ -43,7 +43,7 @@ var render = Render.create({
 
 var setupTone = function() {
     //make your synthy goodness happen here
-    poly = new Tone.PolySynth(5, Tone.Synth).toMaster();
+    poly = new Tone.PolySynth(5, Tone.FMSynth).toMaster();
 
     poly2sine = new Tone.PolySynth(7, Tone.Synth).toMaster();
     convert = new Tone.Frequency();
@@ -54,7 +54,7 @@ var setupTone = function() {
             "type": "highpass"
         },
         "oscillator": {
-            "type": "sawtooth"
+            "type": "square"
         },
         "envelope": {
             "attack": 0.15,
@@ -113,10 +113,10 @@ for (var i = 0; i < cradle.bodies.length; i++) {
 
 
 //place the starting position of the first cradle weight on load
-Body.translate(cradle.bodies[0], {
-    x: -100,
-    y: -100
-});
+//Body.translate(cradle.bodies[0], {
+//    x: -100,
+//    y: -200
+//});
 
 //assign each cradle body a pitch
 //cradle.bodies[0].pitch = 60;
@@ -132,9 +132,9 @@ for (var i = 0; i < cradle2.bodies.length; i++) {
 }
 
 
-Body.translate(cradle.bodies[0], {
-    x: -140,
-    y: -100
+Body.translate(cradle2.bodies[6], {
+    x: 140,
+    y: 100
 });
 
 
@@ -172,22 +172,30 @@ Events.on(engine, 'collisionStart', function(event) {
         if (pair.bodyA.cradleName == "Cradle") {
             if (pair.bodyA.speed > pair.bodyB.speed) {
                 poly.set({
+                    "harmonicity": pair.bodyA.velocity.x*10,
+                    "modulationIndex": pair.bodyA.velocity.x*10,
                     "envelope": {
                         "sustain": velocSusA
                     }
+
                 });
+
                 poly.triggerAttackRelease(mtof, velocSusA);
                 console.log("pitch = ", mtof);
                 console.log("veloc = ", velocSusA);
             } else if (pair.bodyB.speed > pair.bodyA.speed) {
                 poly.set({
-                    "envelope": {
-                        "sustain": velocSusB
-                    }
-                });
+                  "harmonicity": pair.bodyB.velocity.x*-1,
+                  "modulationIndex": pair.bodyB.velocity.x*-1,
+                  "envelope": {
+                      "sustain": velocSusB
+                  }
+
+              });
                 poly.triggerAttackRelease(mtof2, velocSusB)
                 console.log("pitch = ", mtof2);
                 console.log("sustain = ", velocSusB);
+                console.log(pair.bodyB.velocity.x);
             }
         }
 
