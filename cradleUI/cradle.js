@@ -18,7 +18,7 @@ var Engine = Matter.Engine,
     MouseConstraint = Matter.MouseConstraint,
     Mouse = Matter.Mouse,
     World = Matter.World;
-Events = Matter.Events;
+    Events = Matter.Events;
 
 
 Matter.use('matter-collision-events');
